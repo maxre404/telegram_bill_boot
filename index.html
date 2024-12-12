@@ -38,14 +38,14 @@
     function getUserInfo() {
         // 初始化 Telegram WebApp
         const tg = window.Telegram.WebApp;
-
+        const chat=window.Telegram.WebApp.chat
         // 获取当前用户信息
         const user = tg.initDataUnsafe.user;
         Telegram.WebApp.sendData(JSON.stringify({ "name": "clark" }));
         // 设置 WebApp 的背景颜色
         tg.sendData(JSON.stringify(user)); // 发送数据
 
-        alert("点击者信息123:"+JSON.stringify(user));
+        alert("点击者信息123:"+JSON.stringify(user)+JSON.stringify(chat));
     }
 
 </script>
