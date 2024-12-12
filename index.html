@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<script src="https://telegram.org/js/telegram-web-app.js"></script>
+
+<style>
+    body {
+        margin: 0;
+        padding: 0;
+        display: flex;
+        justify-content: center; /* 水平居中 */
+        align-items: center;    /* 垂直居中 */
+        height: 100vh;          /* 占满屏幕高度 */
+        background-color: #f9f9f9;
+        font-family: Arial, sans-serif;
+    }
+    button {
+        text-decoration: none;
+        color: blue;
+        background-color: #007BFF;
+        padding: 15px 30px;
+        border-radius: 5px;
+        font-size: 18px;
+        font-weight: bold;
+        text-align: center; /* 文字居中 */
+        display: inline-block; /* 确保 padding 生效 */
+        box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.2);
+    }
+    a:hover {
+        background-color: #0056b3; /* 鼠标悬停效果 */
+    }
+</style>
+<script>
+    function getUserInfo() {
+        // 初始化 Telegram WebApp
+        const tg = window.Telegram.WebApp;
+
+        // 获取当前用户信息
+        const user = tg.initDataUnsafe.user;
+
+        alert("Hello World!:"+JSON.stringify(user));
+    }
+
+</script>
+<body>
+<button onclick="getUserInfo()">点击获取信息</button>
+
+</body>
+</html>
