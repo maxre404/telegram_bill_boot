@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>充值程序</title>
+    <style>
+        body {
+            display: flex; /* 使 body 成为 flex 容器 */
+            justify-content: center; /* 水平居中 */
+            align-items: center; /* 垂直居中 */
+            min-height: 100vh; /* 确保 body 至少占据整个视口高度 */
+            margin: 0; /* 移除 body 默认的外边距 */
+            background-color: #181E26; /* 设置背景颜色 */
+        }
+
+        .divButton {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-left: 30px;
+        }
+
+        .nameSpan {
+            width: 80px;
+            display: inline-block; /* 使 width 属性生效 */
+            overflow: hidden; /* 如果内容超出宽度则隐藏 */
+            text-overflow: ellipsis; /* 如果内容超出宽度则显示省略号 */
+            white-space: nowrap; /* 防止文本换行 */
+            color: white;
+            font-size: 25px;
+        }
+
+        .inputDiv {
+            margin-top: 30px;
+            margin-left: 0px;
+            display: flex;
+            align-items: center; /* 垂直居中 */
+        }
+
+        .inputMoney {
+            font-size: 25px;
+            background-color: transparent;
+            color: white;
+
+        }
+
+        .inputMoney::placeholder {
+            color: white;
+        }
+
+        .submit {
+            margin-top: 30px;
+        }
+
+        button {
+            all: unset; /* 重置所有默认样式 */
+            color: white;
+            height: 40px;
+            width: 160px;
+            display: inline-block; /* 确保可以设置宽高 */
+            background: cornflowerblue;
+            text-align: center;
+            border-radius: 10px;
+        }
+
+        /* 模态框样式 */
+        .modal {
+            display: flex;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+        }
+
+        .modal-content {
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            max-width: 90%;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+        }
+
+        .dialogText {
+            text-align: center;
+            color: black;
+        }
+
+        .nameCheckBox {
+            font-size: 25px;
+        }
+
+        /*.nameCheckBoxInput{*/
+        /*  font-size: 80px;*/
+        /*}*/
+
+
+    </style>
+</head>
+<body>
+<div id="app">
+    <div class="divButton" @click="showModal = true">
+        <button>请选择充值人员</button>
+    </div>
+    <!--   <div class="inputDiv">-->
+    <!--     <span class="nameSpan">clark</span>-->
+    <!--     <label>-->
+    <!--       <input class="inputMoney" type="number"  placeholder="请输入充值金额">-->
+    <!--     </label>-->
+    <!--   </div>-->
+
+    <!--   <div class="divButton submit"><button>提交</button></div>-->
+
+    <div v-for="user in selectedUsers" :key="user.id" class="inputDiv">
+        <span class="nameSpan">{{ user.name }}</span>
+        <label>
+            <input class="inputMoney" type="number" v-model.number="user.amount" placeholder="请输入充值金额">
+        </label>
+    </div>
+
+    <div v-if="selectedUsers.length > 0" class="divButton submit">
+        <button @click="submitRecharge">提交</button>
+    </div>
+
+
+    <div class="modal" v-if="showModal">
+        <div class="modal-content">
+            <h3 class="dialogText">选择用户</h3>
+            <div v-for="user in allUsers" :key="user.id">
+                <label class="nameCheckBox">
+                    <input class="nameCheckBoxInput" type="checkbox" v-model="user.selected"/> {{ user.name }}
+                </label>
+            </div>
+            <div class="modal-buttons">
+                <button @click="closeModal">取消</button>
+                <button @click="confirmSelectUsers">确认</button>
+            </div>
+        </div>
+    </div>
+
+
+</div>
+<script src="https://cdn.jsdelivr.net/npm/vue@2"></script>
+<script>
+    new Vue({
+        el: '#app',
+        data: {
+            allUsers: [
+                {id: 0, name: "clark", selected: false, amount: 0},
+                {id: 1, name: "steven", selected: false, amount: 0},
+                {id: 2, name: "case", selected: false, amount: 0},
+                {id: 3, name: "candy", selected: false, amount: 0},
+                {id: 4, name: "luffy", selected: false, amount: 0},
+                {id: 5, name: "daniel", selected: false, amount: 0},
+                {id: 6, name: "jeemo", selected: false, amount: 0},
+                {id: 7, name: "xk", selected: false, amount: 0},
+                {id: 8, name: "freya", selected: false, amount: 0},
+                {id: 9, name: "carter", selected: false, amount: 0},
+                {id: 10, name: "mike", selected: false, amount: 0},
+            ],
+            showModal: false
+        },
+        computed: {
+            selectedUsers() {
+                return this.allUsers.filter(user => user.selected);
+            }
+        },
+        methods: {
+            confirmSelectUsers() {
+                this.showModal = false;
+            },
+            closeModal() {
+                this.allUsers.forEach(user => user.selected = false)
+                this.showModal = false;
+            },
+            submitRecharge() {
+              const usersWithZeroAmount = this.selectedUsers.filter(user => user.amount === 0);
+              if (usersWithZeroAmount.length > 0){
+                alert("请检查选中的用户，确保他们的充值金额不为零");
+                return; // 如果有金额为0的用户，则终止提交
+              }
+              const rechargeData = this.selectedUsers.map(user => ({
+                    id: user.id,
+                    name: user.name,
+                    amount: user.amount,
+                }));
+              const response = {}
+              response["topUpList"] = rechargeData
+              const rechargeDataString = JSON.stringify(response); // 将数据转为字符串
+              // 将数据复制到剪贴板
+              navigator.clipboard.writeText(rechargeDataString)
+                      .then(() => {
+                        alert('充值信息已复制到剪贴板');
+                      })
+                      .catch(err => {
+                        alert('复制失败:'+err);
+                      });
+                // 重置所有用户的 selected 状态和 amount 为 0
+                this.allUsers.forEach(user => {
+                    user.selected = false;
+                    user.amount = 0; // 重置金额
+                });
+
+            }
+        }
+    });
+</script>
+</body>
+</html>
