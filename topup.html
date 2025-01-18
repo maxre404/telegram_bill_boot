@@ -207,9 +207,9 @@
                     id: user.id,
                     name: user.name,
                     amount: user.amount,
-                    time: this.selectedDate
                 }));
                 const response = {}
+                response["time"] = this.selectedDate
                 response["topUpList"] = rechargeData
                 const rechargeDataString = JSON.stringify(response);
                 navigator.clipboard.writeText(rechargeDataString)
