@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>汇率计算</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            background-color: #181E26;
+        }
+
+        .divButton {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-left: 30px;
+            margin-top: 10px;
+        }
+
+        .nameSpan {
+            width: 80px;
+            display: inline-block;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            color: white;
+            font-size: 20px;
+        }
+
+        .inputDiv {
+            margin-top: 30px;
+            margin-left: 0px;
+            display: flex;
+            align-items: center;
+        }
+
+        .inputMoney {
+            font-size: 18px;
+            background-color: transparent;
+            color: white;
+            width: 180px;
+
+        }
+
+        .inputMoney::placeholder {
+            color: white;
+        }
+
+        .submit {
+            margin-top: 30px;
+        }
+
+        button {
+            all: unset;
+            color: white;
+            height: 40px;
+            width: 140px;
+            display: inline-block;
+            background: cornflowerblue;
+            text-align: center;
+            border-radius: 10px;
+        }
+
+        /* 模态框样式 */
+        .modal {
+            display: flex;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+        }
+
+        .modal-content {
+            background-color: white;
+            padding: 10px;
+            border-radius: 8px;
+            max-width: 90%;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+        }
+
+        .dialogText {
+            text-align: center;
+            color: black;
+        }
+
+        .nameCheckBox {
+            font-size: 25px;
+        }
+
+        /* 日期选择器相关样式 */
+        .datepickerDiv {
+            display: flex;
+            align-items: center;
+        }
+
+        .rateInput {
+            font-size: 25px;
+            background-color: transparent;
+            color: white;
+            width: 180px;
+            border: 1px solid white;
+            padding: 5px;
+        }
+
+        .divTips {
+            font-size: 20px;
+            display: flex;
+            justify-content: center;
+            color: white;
+            margin-top: 10px;
+
+        }
+    </style>
+</head>
+
+<body>
+<div id="app">
+    <div class="datepickerDiv">
+        <span class="nameSpan">税收%</span>
+        <label>
+            <input type="number" class="rateInput" v-model.number="tax" placeholder="请输入税以及服务费">
+        </label>
+    </div>
+    <div class="divButton" @click="showModal = true">
+        <button>请选择参与人员</button>
+    </div>
+    <div v-for="user in selectedUsers" :key="user.id" class="inputDiv">
+        <span class="nameSpan">{{ user.name }}</span>
+        <label>
+            <input class="inputMoney" type="number" v-model.number="user.amount" placeholder="请输入充值金额">
+        </label>
+    </div>
+
+    <div v-if="selectedUsers.length > 0" class="divButton submit">
+        <button @click="submitRecharge">提交</button>
+    </div>
+    <div v-if="hintStr.length>0" class="divTips">
+        <span v-html="hintStr"></span>
+    </div>
+
+    <div class="modal" v-if="showModal">
+        <div class="modal-content">
+            <h3 class="dialogText">选择用户</h3>
+            <div v-for="user in allUsers" :key="user.id">
+                <label class="nameCheckBox">
+                    <input class="nameCheckBoxInput" type="checkbox" v-model="user.selected"/> {{ user.name }}
+                </label>
+            </div>
+            <div class="modal-buttons">
+                <button @click="closeModal">取消</button>
+                <button @click="confirmSelectUsers">确认</button>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/vue@2"></script>
+<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+<script>
+    function formatDate(date) {
+        const year = date.getFullYear();
+        const month = String(date.getMonth() + 1).padStart(2, '0'); // 月份从 0 开始
+        const day = String(date.getDate()).padStart(2, '0');
+        return `${year}-${month}-${day}`;
+    }
+
+    new Vue({
+        el: '#app',
+        data: {
+            allUsers: [
+                {id: 0, name: "clark", selected: false, amount: ""},
+                {id: 1, name: "steven", selected: false, amount: ""},
+                {id: 2, name: "case", selected: false, amount: ""},
+                {id: 3, name: "candy", selected: false, amount: ""},
+                {id: 4, name: "luffy", selected: false, amount: ""},
+                {id: 5, name: "daniel", selected: false, amount: ""},
+                {id: 6, name: "jeemo", selected: false, amount: ""},
+                {id: 7, name: "xk", selected: false, amount: ""},
+                {id: 8, name: "freya", selected: false, amount: ""},
+                {id: 9, name: "carter", selected: false, amount: ""},
+                {id: 10, name: "mike", selected: false, amount: ""},
+            ],
+            showModal: false,
+            tax: 10,
+            // hintStr:"",
+            hintStr: "",
+        },
+        computed: {
+            selectedUsers() {
+                return this.allUsers.filter(user => user.selected);
+            }
+        },
+        methods: {
+            confirmSelectUsers() {
+                this.showModal = false;
+            },
+            closeModal() {
+                this.allUsers.forEach(user => user.selected = false)
+                this.showModal = false;
+            },
+            addWithAccuracy(num1, num2) {
+                let m, n, r1, r2;
+                try {
+                    r1 = num1.toString().split(".")[1].length;
+                } catch (e) {
+                    r1 = 0;
+                }
+                try {
+                    r2 = num2.toString().split(".")[1].length;
+                } catch (e) {
+                    r2 = 0;
+                }
+                m = Math.pow(10, Math.max(r1, r2));
+                return (num1 * m + num2 * m) / m;
+            },
+            // 精确的乘法
+            multiply(num1, num2) {
+                let m = 0, s1 = num1.toString(), s2 = num2.toString();
+                try {
+                    m += s1.split(".")[1].length
+                } catch (e) {
+                }
+                try {
+                    m += s2.split(".")[1].length
+                } catch (e) {
+                }
+                return Number(s1.replace(".", "")) * Number(s2.replace(".", "")) / Math.pow(10, m);
+            },
+
+            // 精确的除法
+            divide(num1, num2) {
+                let t1 = 0, t2 = 0, r1, r2;
+                try {
+                    t1 = num1.toString().split(".")[1].length
+                } catch (e) {
+                }
+                try {
+                    t2 = num2.toString().split(".")[1].length
+                } catch (e) {
+                }
+                r1 = Number(num1.toString().replace(".", ""));
+                r2 = Number(num2.toString().replace(".", ""));
+                return (r1 / r2) * Math.pow(10, t2 - t1);
+            },
+            submitRecharge() {
+                const usersWithZeroAmount = this.selectedUsers.filter(user => user.amount === "" || Number(user.amount) === 0);
+                if (usersWithZeroAmount.length > 0) {
+                    alert("请检查选中的用户，确保他们的充值金额不为零");
+                    return;
+                }
+                let totalAmount = 0
+                let resultStr = ""
+                this.selectedUsers.forEach(user => {
+                    // let taxMoney = Number(user.amount) * (this.tax / 100)
+                    let taxMoney = this.multiply(Number(user.amount),this.divide(this.tax,100))
+                    let resultAmount = this.addWithAccuracy(user.amount, taxMoney)
+                    totalAmount = this.addWithAccuracy(totalAmount, resultAmount)
+                    resultStr += user.name + ":" + user.amount + "+" + taxMoney + "(" + user.amount + "*" + this.tax + "%) = " + resultAmount + "<br/>"
+                })
+                this.hintStr = resultStr + "共计:" + totalAmount
+
+            }
+        },
+    });
+</script>
+</body>
+
+</html>
