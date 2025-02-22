@@ -77291,7 +77291,7 @@ $1(a){return this.a},
 $S:10}
 A.J4.prototype={
 I(a){var s=null
-return new A.xq(B.Hj,A.aB7(),"Flutter Demo",A.rT(s,A.aqo(B.a1,s,s,B.H3),!0),s)}}
+return new A.xq(B.Hj,A.aB7(),"belajar",A.rT(s,A.aqo(B.a1,s,s,B.H3),!0),s)}}
 A.xH.prototype={
 a5(){var s=t.N
 return new A.PF(A.b([A.ao(["title","\u82f1\u8bed","table","english"],s,s),A.ao(["title","\u9a6c\u6765\u8bed","table","malay"],s,s)],t.m0))}}
@@ -77303,7 +77303,7 @@ A.a_g()},
 I(a){var s,r,q=this,p=null,o=A.a4(a).ax,n=o.y2
 o=n==null?o.c:n
 q.a.toString
-o=A.FY(o,A.dy("Flutter Demo Home Page",p,p,p,p,p,p))
+o=A.FY(o,A.dy("clark belajar project",p,p,p,p,p,p))
 n=q.d
 s=B.b.ga7(n).h(0,"title")
 if(s==null)s=""
