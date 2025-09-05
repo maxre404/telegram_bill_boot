@@ -81566,7 +81566,7 @@ A.vH.prototype={
 I(){return"ArrowEnums."+this.b}}
 A.JE.prototype={
 M(a){var s=null
-return new A.yi(B.A_,"Flutter Demo",A.tC(s,A.asK(B.a3,s,s,B.IK),!0),s)}}
+return new A.yi(B.A_,"\u8bb0\u8d26\u672c",A.tC(s,A.asK(B.a3,s,s,B.IK),!0),s)}}
 A.iu.prototype={
 k(a){return"User{name: "+this.a+", money: "+this.b+" isSelected: "+this.c+" }"}}
 A.a1d.prototype={}
